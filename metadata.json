@@ -1,0 +1,5 @@
+{
+  "name": "Feedback Afetivo para Escritas",
+  "description": "Uma aplicação para gerar feedback técnico e afetivo para produções escritas, utilizando Modelos de Linguagem de Grande Escala.",
+  "requestFramePermissions": []
+}
