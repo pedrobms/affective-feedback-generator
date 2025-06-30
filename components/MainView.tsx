@@ -5,7 +5,8 @@ import { FeedbackDisplay } from './FeedbackDisplay';
 import { LoadingSpinner } from './LoadingSpinner';
 import { ErrorMessage } from './ErrorMessage';
 import { generateFeedbackViaBackend } from '../services/geminiService';
-import { Conversation, ChatMessage } from '../types';
+import {Conversation, ChatMessage, StructuredFeedback} from '../types';
+import {PadDisplay} from "@/components/PadDisplay.tsx";
 
 interface MainViewProps {
     onNewConversation: (conversation: Conversation) => void;
@@ -13,7 +14,7 @@ interface MainViewProps {
 
 export const MainView: React.FC<MainViewProps> = ({ onNewConversation }) => {
     const [inputText, setInputText] = useState<string>('');
-    const [feedback, setFeedback] = useState<string | null>(null);
+    const [feedback, setFeedback] = useState<StructuredFeedback | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -31,9 +32,11 @@ export const MainView: React.FC<MainViewProps> = ({ onNewConversation }) => {
         setFeedback(null);
         try {
             const result = await generateFeedbackViaBackend(inputText);
+            console.log(result);
             setFeedback(result);
 
             const userMessage: ChatMessage = { id: Date.now().toString(), sender: 'user', text: inputText };
+            // A mensagem do bot agora armazena o objeto completo
             const botMessage: ChatMessage = { id: (Date.now() + 1).toString(), sender: 'bot', text: result };
 
             const newConversation: Conversation = {
@@ -66,14 +69,8 @@ export const MainView: React.FC<MainViewProps> = ({ onNewConversation }) => {
                 />
                 <SubmitButton onClick={handleSubmit} isLoading={isLoading} disabled={!inputText.trim()} />
             </div>
-
             {isLoading && <LoadingSpinner />}
             {error && <ErrorMessage message={error} />}
-            {feedback && !isLoading && (
-                <div className="mt-8">
-                    <FeedbackDisplay feedback={feedback} />
-                </div>
-            )}
         </div>
     );
 };

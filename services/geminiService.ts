@@ -1,8 +1,10 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL
+import { StructuredFeedback } from '../types';
 
-export const generateFeedbackViaBackend = async (userText: string): Promise<string> => {
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+export const generateFeedbackViaBackend = async (userText: string): Promise<StructuredFeedback> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/generate-feedback`, { // Ensure this endpoint matches your backend setup
+    const response = await fetch(`${API_BASE_URL}/generate-feedback`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -23,8 +25,8 @@ export const generateFeedbackViaBackend = async (userText: string): Promise<stri
 
     const data = await response.json();
 
-    if (!data.feedback) {
-      throw new Error("O serviço de feedback retornou uma resposta inesperada ou vazia.");
+    if (!data.feedback || !data.feedback.padAnalysis) { // Verifica a nova estrutura
+      throw new Error("O serviço de feedback retornou uma resposta inesperada ou inválida.");
     }
 
     return data.feedback;

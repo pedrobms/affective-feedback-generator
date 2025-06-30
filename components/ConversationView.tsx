@@ -1,6 +1,8 @@
 import React from 'react';
 import { Conversation } from '../types';
 import { FeedbackDisplay } from './FeedbackDisplay';
+import { PadDisplay } from './PadDisplay';
+import { StructuredFeedback } from '../types';
 
 interface ConversationViewProps {
     conversation: Conversation | null;
@@ -26,8 +28,18 @@ export const ConversationView: React.FC<ConversationViewProps> = ({ conversation
                             <p className="text-slate-300 whitespace-pre-wrap">{message.text}</p>
                         </div>
                     ) : (
-                        <FeedbackDisplay feedback={message.text} />
-                    )}
+                        typeof message.text === 'object' ? (
+                            <div className="space-y-8">
+                                <PadDisplay scores={(message.text as StructuredFeedback).padAnalysis} />
+                                <FeedbackDisplay
+                                    technicalContent={(message.text as StructuredFeedback).technicalFeedback}
+                                    affectiveContent={(message.text as StructuredFeedback).affectiveFeedback}
+                                    padAnalysisReview={(message.text as StructuredFeedback).padAnalysisReview}
+                                />
+                            </div>
+                    ) : (
+                            <p>{message.text}</p>
+                    ))}
                 </div>
             ))}
         </div>
